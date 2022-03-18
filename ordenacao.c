@@ -14,6 +14,8 @@ typedef char arqvetor[ ARQVETOR_TAM ][ 256 ];
 void insertion_sort( vetor vet, int tam );
 void selection_sort( vetor vet, int tam );
 
+void gera_random_vetor( vetor vet, int tam, int min, int max );
+
 int le_amostras_vet( char* arq, vetor vet, int* tam );
 void imprime_amostras_vet( vetor vet, int tam );
 
@@ -23,69 +25,137 @@ void lista_arqnome_vet( arqvetor arqvet, int tam );
 void carrega_arqpath( char* path, char* arqnome, char* basedir );
 
 void menu();
+void menu_ordenamento();
 
 int main() {
 	vetor vet;	
 	int tam;
+	int min, max;
 	
 	arqvetor arqvet;
 	int arqvet_tam;
 	int leu;
 	
-	int op = 1;
+	char op = '1';
+	char op2 = '0';
 	int arqnum = 0;
 	
 	char path[ 256 ];
 	
 	carrega_arqnome_vet( arqvet, &arqvet_tam );
-	do {
-		fflush( stdin );
-		
+	do {					
 		menu();
-		printf( "Informe o metodo de selecao: " );
-		scanf( "%d", &op );				
+		printf( "\nInforme a opcao: " );		
 		
+		fflush( stdin );
+		fflush( stdout );
+		op = getchar();				
+				
 		switch( op ) {
-			case 1:
-			case 2:
+			case '1':
+				printf( "\nInforme a quantidade de elementos: " );
+				scanf( "%d", &tam );
+				printf( "Informe o valor minimo: " );
+				scanf( "%d", &min );
+				printf( "Informe o valor maximo: " );
+				scanf( "%d", &max );
+				
+				gera_random_vetor( vet, tam, min, max );
+				
+				printf( "\nVetor gerado com sucesso!" );
+				break;
+			case '2':
 				lista_arqnome_vet( arqvet, arqvet_tam );				
 				printf( "\nInforme o numero do arquivo de amostra: " );
 				scanf( "%d", &arqnum );
-				
-				printf( "\n" );
-				
+								
 				if ( arqnum < 1 || arqnum >= arqvet_tam ) {
-					printf( "\nVoce digitou um número do arquivo que não consta na lista acima." );
-					getc( stdin );
+					printf( "\nVoce digitou um numero do arquivo que nao consta na lista acima." );
 				} else {				
 					carrega_arqpath( path, arqvet[ arqnum-1 ], ARQ_DIR );
 					leu = le_amostras_vet( path, vet, &tam );
-					if ( !leu ) {
+					if ( leu ) {
+						printf( "\nAmostras carregadas com sucesso!" );
+					} else {
 						printf( "\nFalha na leitura do arquivo: %s", path );
-						getc( stdin );
-					}
-					
-					imprime_amostras_vet( vet, tam );
-				}				
-					
+					}	
+				}
+				break;
+			case '3':
+				imprime_amostras_vet( vet, tam );
 			    break;
+			case '4':
+				menu_ordenamento();
+				printf( "\nInforme a opcao: " );
+				
+				fflush( stdin );
+				fflush( stdout );
+				op2 = getchar();
+				
+				switch( op2 ) {
+					case '1':
+						insertion_sort( vet, tam );
+						printf( "\nVetor ordenado com sucesso." );
+						break;
+					case '2':
+						selection_sort( vet, tam );
+						printf( "\nVetor ordenado com sucesso." );
+						break;	
+					case '3': 
+						break;
+					default:
+						printf( "\nOpcao invalida!" );
+				}	
+				
+				if ( op2 != '3' ) {
+					printf( "\nTecle enter para continuar..." );
+					fflush( stdin );
+					fflush( stdout );
+					getc( stdin );
+				}							
+				break;			
+			case '0':
+				printf( "\nTecle enter para sair...\n" );
+				break;
+			default:
+				printf( "\nOpcao invalida!" );
 		}
-	} while( op != 0 );
+			
+		if ( op != '0' && op != '4' ) {
+			if ( op != '0' )
+				printf( "\nTecle enter para continuar..." );
+			fflush( stdin );
+			fflush( stdout );
+			getc( stdin );				
+		}
+		
+	} while( op != '0' );
 		
 	
 	return 0;
 }
 
 void menu() {
-	printf( "\n|******** MENU ********|" );
-	printf( "\n|                      |" );
-	printf( "\n|  (1) Selection sort  |" );
-	printf( "\n|  (2) Insertion sort  |" );
-	printf( "\n|  (0) Sair            |" );
-	printf( "\n|                      |" );
-	printf( "\n|**********************|\n\n" );		
+	printf( "\n|*********** MENU ************|" );
+	printf( "\n|                             |" );
+	printf( "\n|  (1) Gera vetor randomico   |" );
+	printf( "\n|  (2) Carregar amostras      |" );
+	printf( "\n|  (3) Listar                 |" );
+	printf( "\n|  (4) Ordenar                |" );
+	printf( "\n|  (0) Sair                   |" );
+	printf( "\n|                             |" );
+	printf( "\n|*****************************|\n" );		
 }
 
+void menu_ordenamento() {
+	printf( "\n|****** ORDENAMENTO ******|" );
+	printf( "\n|                         |" );
+	printf( "\n|  (1) Insertion sort     |" );
+	printf( "\n|  (2) Selection sort     |" );
+	printf( "\n|  (3) Voltar             |" );
+	printf( "\n|                         |" );
+	printf( "\n|*************************|\n" );
+}
 
 void carrega_arqpath( char* path, char* arqnome, char* basedir ) {
 	strcpy( path, basedir );
@@ -129,7 +199,7 @@ int le_amostras_vet( char* arqnome, vetor vet, int* tam ) {
 	
 	for( i = 0; i < *tam; i++ ) {
 		fgets( linha, sizeof( linha ), arq );
-		vet[ i ] = atoi( linha );
+		vet[ i ] = atoi( linha );		
 	}
 	
 	fclose( arq );
@@ -140,13 +210,18 @@ int le_amostras_vet( char* arqnome, vetor vet, int* tam ) {
 void imprime_amostras_vet( vetor vet, int tam ) {
 	int i;
 	
-	printf( "Vetor=\n" );
+	printf( "\nVetor=\n" );
 	for( i = 0; i < tam; i++ ) {
 		printf( "%7d", vet[ i ] ); 
 		if ( (i+1) % 10 == 0 )
 			printf( "\n" );
 	}
-	printf( "\n" );
+}
+
+void gera_random_vetor( vetor vet, int tam, int min, int max ) {
+	int i;
+	for( int i = 0; i < tam; i++ )
+		vet[ i ] = min + ( rand() % ( max-min+1 ) );	
 }
 
 void insertion_sort( vetor vet, int tam ) {
@@ -159,17 +234,17 @@ void insertion_sort( vetor vet, int tam ) {
 			vet[ j+1 ] = vet[ j ];
 			j--;
 		}
-		vet[ i ] = aux;
+		vet[ j+1 ] = aux;
 	}
 }
 
 void selection_sort( vetor vet, int tam ) {
 	int i, j, aux, min_i;
-	
+
 	for( i = 0; i < tam-1; i++ ) {
 		min_i = i;
 		for( j = i+1; j < tam; j++ )
-			if ( vet[ i ] > vet[ j ] ) 
+			if ( vet[ j ] < vet[ min_i ] ) 
 				min_i = j;
 		if ( min_i != i ) {
 			aux = vet[ i ];
