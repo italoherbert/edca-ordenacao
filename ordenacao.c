@@ -73,7 +73,7 @@ int main() {
 				printf( "\nInforme o numero do arquivo de amostra: " );
 				scanf( "%d", &arqnum );
 								
-				if ( arqnum < 1 || arqnum >= arqvet_tam ) {
+				if ( arqnum < 1 || arqnum > arqvet_tam ) {
 					printf( "\nVoce digitou um numero do arquivo que nao consta na lista acima." );
 				} else {				
 					carrega_arqpath( path, arqvet[ arqnum-1 ], ARQ_DIR );
@@ -101,13 +101,13 @@ int main() {
 						ms1 = get_ms();					
 						insertion_sort( vet, tam );					
 						ms2 = get_ms();
-						printf( "\nVetor ordenado com sucesso em: %ldms", (ms2-ms1) );
+						printf( "\nVetor ordenado com sucesso em: %lldms", (ms2-ms1) );
 						break;
 					case '2':
 						ms1 = get_ms();
 						selection_sort( vet, tam );						
 						ms2 = get_ms();
-						printf( "\nVetor ordenado com sucesso em: %ldms", (ms2-ms1) );
+						printf( "\nVetor ordenado com sucesso em: %lldms", (ms2-ms1) );
 						break;	
 					case '3': 
 						break;
@@ -220,10 +220,11 @@ void imprime_amostras_vet( vetor vet, int tam ) {
 	
 	printf( "\nVetor=\n" );
 	for( i = 0; i < tam; i++ ) {
-		printf( "%7d", vet[ i ] ); 
-		if ( (i+1) % 10 == 0 )
+		printf( "%11d", vet[ i ] ); 
+		if ( (i+1) % 7 == 0 )
 			printf( "\n" );
 	}
+	printf( "\n" );
 }
 
 void gera_random_vetor( vetor vet, int tam, int min, int max ) {
