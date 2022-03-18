@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <string.h>
+#include <sys/time.h>
 
 #define VETOR_TAM 100000
 #define ARQVETOR_TAM 12
@@ -15,6 +16,8 @@ void insertion_sort( vetor vet, int tam );
 void selection_sort( vetor vet, int tam );
 
 void gera_random_vetor( vetor vet, int tam, int min, int max );
+
+long long get_ms();
 
 int le_amostras_vet( char* arq, vetor vet, int* tam );
 void imprime_amostras_vet( vetor vet, int tam );
@@ -31,6 +34,7 @@ int main() {
 	vetor vet;	
 	int tam;
 	int min, max;
+	long long ms1, ms2;
 	
 	arqvetor arqvet;
 	int arqvet_tam;
@@ -94,12 +98,16 @@ int main() {
 				
 				switch( op2 ) {
 					case '1':
-						insertion_sort( vet, tam );
-						printf( "\nVetor ordenado com sucesso." );
+						ms1 = get_ms();					
+						insertion_sort( vet, tam );					
+						ms2 = get_ms();
+						printf( "\nVetor ordenado com sucesso em: %ldms", (ms2-ms1) );
 						break;
 					case '2':
-						selection_sort( vet, tam );
-						printf( "\nVetor ordenado com sucesso." );
+						ms1 = get_ms();
+						selection_sort( vet, tam );						
+						ms2 = get_ms();
+						printf( "\nVetor ordenado com sucesso em: %ldms", (ms2-ms1) );
 						break;	
 					case '3': 
 						break;
@@ -252,4 +260,10 @@ void selection_sort( vetor vet, int tam ) {
 			vet[ min_i ] = aux;
 		}
 	}
+}
+
+long long get_ms() {
+	struct timeval t;
+	gettimeofday( &t, NULL );	
+	return ( ((long long)(t.tv_sec) * 1000) ) + ( t.tv_usec/1000 );
 }
