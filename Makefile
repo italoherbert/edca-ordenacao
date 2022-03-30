@@ -1,7 +1,6 @@
 FILE = ordenacao
 EXEC_EXT = .exe
 CC = gcc
-CFLAGS = -g -std=c99 -Wall -pedantic
 
 all: compila linka
 
