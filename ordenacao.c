@@ -16,6 +16,7 @@ void insertion_sort(vetor vet, int tam);
 void selection_sort(vetor vet, int tam);
 void merge_sort(vetor vet, vetor auxvet, int ini, int fim);
 void quick_sort(vetor vet, int p, int r);
+void quick_sort_tradicional(vetor vet, int p, int r );
 
 void gera_random_vetor(vetor vet, int tam, int min, int max);
 
@@ -126,12 +127,18 @@ int main() {
 						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
 						break;
 					case '5':
+						ms1 = get_ms();
+						quick_sort_tradicional(vet, 0, tam-1);
+						ms2 = get_ms();
+						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
+						break;
+					case '6':
 						break;
 					default:
 						printf("\nOpcao invalida!");
 				}
 
-				if (op2 != '3')	{
+				if (op2 != '6')	{
 					printf("\nTecle enter para continuar...");
 					fflush(stdin);
 					fflush(stdout);
@@ -171,15 +178,16 @@ void menu() {
 }
 
 void menu_ordenamento() {
-	printf("\n|****** ORDENAMENTO ******|");
-	printf("\n|                         |");
-	printf("\n|  (1) Insertion sort     |");
-	printf("\n|  (2) Selection sort     |");
-	printf("\n|  (3) Merge sort         |");
-	printf("\n|  (4) Quick sort         |");
-	printf("\n|  (5) Voltar             |");
-	printf("\n|                         |");
-	printf("\n|*************************|\n");
+	printf("\n|********* ORDENAMENTO *********|");
+	printf("\n|                               |");
+	printf("\n|  (1) Insertion sort           |");
+	printf("\n|  (2) Selection sort           |");
+	printf("\n|  (3) Merge sort               |");
+	printf("\n|  (4) Quick sort               |");
+	printf("\n|  (5) Quick sort tradicional   |");
+	printf("\n|  (6) Voltar                   |");
+	printf("\n|                               |");
+	printf("\n|*******************************|\n");
 }
 
 void carrega_arqpath(char *path, char *arqnome, char *basedir) {
@@ -335,6 +343,15 @@ int particiona_tradicional(vetor vet, int p, int r ) {
 	vet[ r ] = vet[ i+1 ];
 	vet[ i+1 ] = pivor;			
 	return i+1;		
+}
+
+void quick_sort_tradicional(vetor vet, int p, int r ) {
+	int pivo;
+	if ( p < r ) {
+		pivo = particiona_tradicional( vet, p, r );
+		quick_sort( vet, p, pivo-1 );
+		quick_sort( vet, pivo+1, r );
+	}
 }
 
 int particiona(vetor vet, int p, int r ) {
