@@ -79,8 +79,7 @@ int main() {
 
 				if (arqnum < 1 || arqnum > arqvet_tam) {
 					printf("\nVoce digitou um numero do arquivo que nao consta na lista acima.");
-				}
-				else {
+				} else {
 					carrega_arqpath(path, arqvet[arqnum - 1], ARQ_DIR);
 					leu = le_amostras_vet(path, vet, &tam);
 					if (leu) {
