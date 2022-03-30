@@ -145,7 +145,7 @@ int main() {
 				printf("\nOpcao invalida!");
 		}
 
-		if (op != '0' && op != '4')	{
+		if (op != '0' && op != '4') {
 			if (op != '0')
 				printf("\nTecle enter para continuar...");
 			fflush(stdin);
