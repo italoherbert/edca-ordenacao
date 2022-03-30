@@ -28,9 +28,10 @@ A (opção 3) permite que sejam listadas todas as amostras carregadas ou vetor
 randômico gerado.
 
 A (opção 4) permite que se possa escolher em outro menu um tipo de ordenamento: 
-Insertion Sort ou Selection Sort. Após o algoritmo de ordenamento selecionado, 
-o vetor já deve se encontrar ordenado. Com a operação de ordenação, é mostrada 
-também a informação sobre o tempo que a instrução levou para ser executada.
+Insertion Sort, Selection Sort, Merge Sort ou Quick Sort. Após o algoritmo de 
+ordenamento selecionado, o vetor já deve se encontrar ordenado. Com a operação 
+de ordenação, é mostrada também a informação sobre o tempo que a instrução levou 
+para ser executada.
 
 A (opção 5) permite sair do sistema
 
