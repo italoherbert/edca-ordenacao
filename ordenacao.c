@@ -434,16 +434,6 @@ void counting_sort(vetor in, vetor out, int max, int tam) {
 	}
 }
 
-void swap( int* v1, int *v2, int tam ) {
-	int i;
-	int aux;
-	for( i = 0; i < tam; i++ ) {
-		aux = v1[i];
-		v1[i] = v2[i];
-		v2[i] = aux;
-	}
-}
-
 void radix_sort(arranjos arjs, int tam, int d) {
 	int i, j, k;
 	int aux;
