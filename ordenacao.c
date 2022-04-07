@@ -3,6 +3,7 @@
 #include <math.h>
 #include <string.h>
 #include <sys/time.h>
+#include <limits.h>
 
 #define VETOR_TAM 100000
 #define ARQVETOR_TAM 12
@@ -17,6 +18,10 @@ void selection_sort(vetor vet, int tam);
 void merge_sort(vetor vet, vetor auxvet, int ini, int fim);
 void quick_sort(vetor vet, int p, int r);
 void quick_sort_tradicional(vetor vet, int p, int r );
+void counting_sort(vetor in, vetor out, int max, int tam);
+
+int busca_max(vetor vet, int tam);
+void copia_vetor( vetor v1, vetor v2, int tam );
 
 void gera_random_vetor(vetor vet, int tam, int min, int max);
 
@@ -38,7 +43,7 @@ int main() {
 	vetor auxvet;
 	
 	int tam;
-	int min, max;
+	int min, max, i;
 	long long ms1, ms2;
 
 	arqvetor arqvet;
@@ -60,18 +65,17 @@ int main() {
 		fflush(stdout);
 		op = getchar();
 
-		switch (op) {
-			case '1':
-				printf("\nInforme a quantidade de elementos: ");
-				scanf("%d", &tam);
-				printf("Informe o valor minimo: ");
-				scanf("%d", &min);
-				printf("Informe o valor maximo: ");
-				scanf("%d", &max);
+		switch (op) {			
+			case '1':				
+				printf("\nInforme o caminho do arquivo de amostras: ");
+				scanf("%s", &path);
 
-				gera_random_vetor(vet, tam, min, max);
-
-				printf("\nVetor gerado com sucesso!");
+				leu = le_amostras_vet(path, vet, &tam);
+				if (leu) {
+					printf("\nAmostras carregadas com sucesso!");
+				} else {
+					printf("\nFalha na leitura do arquivo: %s", path);
+				}				
 				break;
 			case '2':
 				lista_arqnome_vet(arqvet, arqvet_tam);
@@ -89,7 +93,7 @@ int main() {
 						printf("\nFalha na leitura do arquivo: %s", path);
 					}
 				}
-				break;
+				break;								
 			case '3':
 				imprime_amostras_vet(vet, tam);
 				break;
@@ -133,12 +137,22 @@ int main() {
 						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
 						break;
 					case '6':
+						max = busca_max( vet, tam );
+
+						ms1 = get_ms();
+						counting_sort( vet, auxvet, max, tam );
+						ms2 = get_ms();
+						
+						copia_vetor( vet, auxvet, tam );
+						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
+						break;
+					case '0':
 						break;
 					default:
 						printf("\nOpcao invalida!");
 				}
 
-				if (op2 != '6')	{
+				if (op2 != '0')	{
 					printf("\nTecle enter para continuar...");
 					fflush(stdin);
 					fflush(stdout);
@@ -166,15 +180,15 @@ int main() {
 }
 
 void menu() {
-	printf("\n|*********** MENU ************|");
-	printf("\n|                             |");
-	printf("\n|  (1) Gera vetor randomico   |");
-	printf("\n|  (2) Carregar amostras      |");
-	printf("\n|  (3) Listar                 |");
-	printf("\n|  (4) Ordenar                |");
-	printf("\n|  (0) Sair                   |");
-	printf("\n|                             |");
-	printf("\n|*****************************|\n");
+	printf("\n|*************** MENU *****************|");
+	printf("\n|                                      |");
+	printf("\n|  (1) Informar arquivo de leitura     |");
+	printf("\n|  (2) Selecionar arquivo para leitura |");
+	printf("\n|  (3) Listar amostras                 |");
+	printf("\n|  (4) Ordenar amostras                |");
+	printf("\n|  (0) Sair                            |");
+	printf("\n|                                      |");
+	printf("\n|**************************************|\n");
 }
 
 void menu_ordenamento() {
@@ -185,7 +199,8 @@ void menu_ordenamento() {
 	printf("\n|  (3) Merge sort               |");
 	printf("\n|  (4) Quick sort               |");
 	printf("\n|  (5) Quick sort tradicional   |");
-	printf("\n|  (6) Voltar                   |");
+	printf("\n|  (6) Counting Sort            |");
+	printf("\n|  (0) Voltar                   |");
 	printf("\n|                               |");
 	printf("\n|*******************************|\n");
 }
@@ -255,6 +270,8 @@ void imprime_amostras_vet(vetor vet, int tam) {
 
 void gera_random_vetor(vetor vet, int tam, int min, int max) {
 	int i;
+	
+	srand( time( NULL ) );
 	for (int i = 0; i < tam; i++)
 		vet[i] = min + (rand() % (max - min + 1));
 }
@@ -387,6 +404,40 @@ void quick_sort(vetor vet, int p, int r ) {
 		pivo = particiona( vet, p, r );
 		quick_sort( vet, p, pivo-1 );
 		quick_sort( vet, pivo+1, r );
+	}
+}
+
+int busca_max(vetor vet, int tam) {
+	int max = INT_MIN;
+	int i;
+	for( i = 0; i < tam; i++ )
+		if ( vet[ i ] > max )
+			max = vet[ i ];
+	return max;
+}
+
+void copia_vetor( vetor v1, vetor v2, int tam ) {
+	int i;
+	for( i = 0; i < tam; i++ )
+		v1[ i ] = v2[ i ];
+}
+
+void counting_sort(vetor in, vetor out, int max, int tam) {
+	vetor aux;
+	int i;
+	
+	for( i = 0; i <= max; i++ )
+		aux[ i ] = 0;
+	
+	for( i = 0; i < tam; i++ ) 
+		aux[ in[ i ] ]++;
+	
+	for( i = 1; i <= max; i++ )
+		aux[ i ] += aux[ i-1 ];
+	
+	for( i = 0; i < tam; i++ ) {
+		out[ aux[ in[ i ] ] ] = in[ i ];
+		aux[ in[ i ] ]--;
 	}
 }
 
