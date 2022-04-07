@@ -10,15 +10,14 @@ executável está definida na variável "EXEC_EXT" do arquivo Makefile.
 
 O programa tem um menuzinho simples e intuitivo com as opções:
 
-(1) Gerar vetor randomico
-(2) Carregar amostras
-(3) Listar
-(4) Ordenar
+(1) Informar arquivo de leitura
+(2) Selecionar arquivo para leitura
+(3) Listar amostras
+(4) Ordenar amostras
 (0) Sair
 
-A (opção 1) permite que seja informado um número de elementos a serem gerados e, 
-permite também a configuração do intervalo em que os valores do vetor precisam 
-estar dentro. Uma vez o vetor gerado, se pode listá-lo ou ordená-lo.
+A (opção 1) permite que seja informado um caminho do arquivo de teste ou amostras 
+para que as amostras sejam carregadas.
 
 A (opção 2) permite que seja mostrada uma lista com os 12 arquivos de amostra, 
 numerados de 1 à 12 para, então, ser solicitado o número do arquivo que se 
@@ -28,10 +27,10 @@ A (opção 3) permite que sejam listadas todas as amostras carregadas ou vetor
 randômico gerado.
 
 A (opção 4) permite que se possa escolher em outro menu um tipo de ordenamento: 
-Insertion Sort, Selection Sort, Merge Sort, Quick Sort ou Quick Sort tradicional. 
-Após o algoritmo de ordenamento selecionado, o vetor já deve se encontrar 
-ordenado. Com a operação de ordenação, é mostrada também a informação sobre 
-o tempo que a instrução levou para ser executada.
+Insertion Sort, Selection Sort, Merge Sort, Quick Sort ou Quick Sort tradicional, 
+Counting Sort e Radix Sort. Após o algoritmo de ordenamento selecionado, o vetor 
+já deve se encontrar ordenado. Com a operação de ordenação, é mostrada também a 
+informação sobre o tempo que a instrução levou para ser executada.
 
 A (opção 5) permite sair do sistema
 

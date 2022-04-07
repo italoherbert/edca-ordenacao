@@ -6,11 +6,13 @@
 #include <limits.h>
 
 #define VETOR_TAM 100000
+#define ARRANJO_TAM 1000
 #define ARQVETOR_TAM 12
 
 #define ARQ_DIR "instancias-num"
 
 typedef int vetor[VETOR_TAM];
+typedef int arranjos[2][10];
 typedef char arqvetor[ARQVETOR_TAM][256];
 
 void insertion_sort(vetor vet, int tam);
@@ -19,11 +21,13 @@ void merge_sort(vetor vet, vetor auxvet, int ini, int fim);
 void quick_sort(vetor vet, int p, int r);
 void quick_sort_tradicional(vetor vet, int p, int r );
 void counting_sort(vetor in, vetor out, int max, int tam);
+void radix_sort(arranjos arjs, int tam, int d);
 
 int busca_max(vetor vet, int tam);
 void copia_vetor( vetor v1, vetor v2, int tam );
 
-void gera_random_vetor(vetor vet, int tam, int min, int max);
+void vetor_para_arranjos( arranjos arjs, vetor vet, int tam, int* d );
+void arranjos_para_vetor( arranjos arjs, vetor vet, int tam, int d );
 
 long long get_ms();
 
@@ -41,8 +45,9 @@ void menu_ordenamento();
 int main() {
 	vetor vet;
 	vetor auxvet;
+	arranjos arjs;
 	
-	int tam;
+	int tam, d;
 	int min, max, i;
 	long long ms1, ms2;
 
@@ -55,7 +60,7 @@ int main() {
 	int arqnum = 0;
 
 	char path[256];
-
+		
 	carrega_arqnome_vet(arqvet, &arqvet_tam);
 	do {
 		menu();
@@ -146,6 +151,16 @@ int main() {
 						copia_vetor( vet, auxvet, tam );
 						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
 						break;
+					case '7':
+						vetor_para_arranjos( arjs, vet, tam, &d );
+						
+						ms1 = get_ms();
+						radix_sort( arjs, tam, d );
+						ms2 = get_ms();
+						
+						arranjos_para_vetor( arjs, vet, tam, d );
+						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
+						break;
 					case '0':
 						break;
 					default:
@@ -200,6 +215,7 @@ void menu_ordenamento() {
 	printf("\n|  (4) Quick sort               |");
 	printf("\n|  (5) Quick sort tradicional   |");
 	printf("\n|  (6) Counting Sort            |");
+	printf("\n|  (7) Radix Sort               |");
 	printf("\n|  (0) Voltar                   |");
 	printf("\n|                               |");
 	printf("\n|*******************************|\n");
@@ -266,14 +282,6 @@ void imprime_amostras_vet(vetor vet, int tam) {
 			printf("\n");
 	}
 	printf("\n");
-}
-
-void gera_random_vetor(vetor vet, int tam, int min, int max) {
-	int i;
-	
-	srand( time( NULL ) );
-	for (int i = 0; i < tam; i++)
-		vet[i] = min + (rand() % (max - min + 1));
 }
 
 void insertion_sort(vetor vet, int tam) {
@@ -407,21 +415,6 @@ void quick_sort(vetor vet, int p, int r ) {
 	}
 }
 
-int busca_max(vetor vet, int tam) {
-	int max = INT_MIN;
-	int i;
-	for( i = 0; i < tam; i++ )
-		if ( vet[ i ] > max )
-			max = vet[ i ];
-	return max;
-}
-
-void copia_vetor( vetor v1, vetor v2, int tam ) {
-	int i;
-	for( i = 0; i < tam; i++ )
-		v1[ i ] = v2[ i ];
-}
-
 void counting_sort(vetor in, vetor out, int max, int tam) {
 	vetor aux;
 	int i;
@@ -439,6 +432,95 @@ void counting_sort(vetor in, vetor out, int max, int tam) {
 		out[ aux[ in[ i ] ] ] = in[ i ];
 		aux[ in[ i ] ]--;
 	}
+}
+
+void swap( int* v1, int *v2, int tam ) {
+	int i;
+	int aux;
+	for( i = 0; i < tam; i++ ) {
+		aux = v1[i];
+		v1[i] = v2[i];
+		v2[i] = aux;
+	}
+}
+
+void radix_sort(arranjos arjs, int tam, int d) {
+	int i, j, k;
+	int aux;
+	int ordenado;	
+	for( k = d-1; k >= 0; k-- ) {
+		do {
+			ordenado = 1;
+			for( i = 0; i < tam-1; i++ ) {
+				if ( arjs[ i ][ k ] > arjs[ i+1 ][ k ] ) {					
+					for( j = 0; j < d; j++ ) {
+						aux = arjs[ i ][ j ];
+						arjs[ i ][ j ] = arjs[ i+1 ][ j ];
+						arjs[ i+1 ][ j ] = aux;
+					}					
+					ordenado = 0;
+				}
+			}
+		} while( !ordenado );
+	}
+}
+
+void vetor_para_arranjos( arranjos arjs, vetor vet, int tam, int* d) {
+	int i, j;
+	int num, potencia10, pot10;
+	int max;
+	
+	max = busca_max( vet, tam );
+	*d = ((int)log10( max ))+1;
+	
+	potencia10 = (int)round(pow( 10.0, (*d)-1 ));
+	for( i = 0; i < tam; i++ ) {
+		num = vet[ i ];
+		
+		pot10 = potencia10;
+		for( j = 0; j < *d; j++ ) {			
+			arjs[ i ][ j ] = num / pot10;
+			num -= arjs[ i ][ j ] * pot10;
+			pot10 /= 10;		
+		}
+	}	
+}
+
+void arranjos_para_vetor( arranjos arjs, vetor vet, int tam, int d ) {
+	int i, j;
+	int num, potencia10, pot10;
+	int naozero;
+
+	potencia10 = (int)round(pow( 10.0, d-1 ));
+	for( i = 0; i < tam; i++ ) {
+		num = 0;
+		
+		pot10 = potencia10;
+		naozero = 0;
+		for( j = 0; j < d; j++ ) {
+			if ( !naozero || ( naozero && arjs[ i ][ j ] != 0 ) ) {			
+				num += arjs[ i ][ j ] * pot10;
+				naozero = 1;
+			}
+			pot10 /= 10;
+		}			
+		vet[ i ] = num;
+	}
+}
+
+int busca_max(vetor vet, int tam) {
+	int max = INT_MIN;
+	int i;
+	for( i = 0; i < tam; i++ )
+		if ( vet[ i ] > max )
+			max = vet[ i ];
+	return max;
+}
+
+void copia_vetor( vetor v1, vetor v2, int tam ) {
+	int i;
+	for( i = 0; i < tam; i++ )
+		v1[ i ] = v2[ i ];
 }
 
 long long get_ms() {
