@@ -6,13 +6,11 @@
 #include <limits.h>
 
 #define VETOR_TAM 100000
-#define ARRANJO_TAM 1000
 #define ARQVETOR_TAM 12
 
 #define ARQ_DIR "instancias-num"
 
 typedef int vetor[VETOR_TAM];
-typedef int arranjos[2][10];
 typedef char arqvetor[ARQVETOR_TAM][256];
 
 void insertion_sort(vetor vet, int tam);
@@ -21,13 +19,13 @@ void merge_sort(vetor vet, vetor auxvet, int ini, int fim);
 void quick_sort(vetor vet, int p, int r);
 void quick_sort_tradicional(vetor vet, int p, int r );
 void counting_sort(vetor in, vetor out, int max, int tam);
-void radix_sort(arranjos arjs, int tam, int d);
+void radix_sort(int** arranjos, int tam, int d);
 
 int busca_max(vetor vet, int tam);
 void copia_vetor( vetor v1, vetor v2, int tam );
 
-void vetor_para_arranjos( arranjos arjs, vetor vet, int tam, int* d );
-void arranjos_para_vetor( arranjos arjs, vetor vet, int tam, int d );
+void vetor_para_arranjos( int*** arranjos, vetor vet, int tam, int* d );
+void arranjos_para_vetor( int** arranjos, vetor vet, int tam, int d );
 
 long long get_ms();
 
@@ -45,7 +43,7 @@ void menu_ordenamento();
 int main() {
 	vetor vet;
 	vetor auxvet;
-	arranjos arjs;
+	int** arranjos;
 	
 	int tam, d;
 	int min, max, i;
@@ -60,7 +58,7 @@ int main() {
 	int arqnum = 0;
 
 	char path[256];
-		
+			
 	carrega_arqnome_vet(arqvet, &arqvet_tam);
 	do {
 		menu();
@@ -152,13 +150,13 @@ int main() {
 						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
 						break;
 					case '7':
-						vetor_para_arranjos( arjs, vet, tam, &d );
+						vetor_para_arranjos( &arranjos, vet, tam, &d );
 						
 						ms1 = get_ms();
-						radix_sort( arjs, tam, d );
+						radix_sort( arranjos, tam, d );
 						ms2 = get_ms();
 						
-						arranjos_para_vetor( arjs, vet, tam, d );
+						arranjos_para_vetor( arranjos, vet, tam, d );
 						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
 						break;
 					case '0':
@@ -434,7 +432,7 @@ void counting_sort(vetor in, vetor out, int max, int tam) {
 	}
 }
 
-void radix_sort(arranjos arjs, int tam, int d) {
+void radix_sort(int** arranjos, int tam, int d) {
 	int i, j, k;
 	int aux;
 	int ordenado;	
@@ -442,11 +440,11 @@ void radix_sort(arranjos arjs, int tam, int d) {
 		do {
 			ordenado = 1;
 			for( i = 0; i < tam-1; i++ ) {
-				if ( arjs[ i ][ k ] > arjs[ i+1 ][ k ] ) {					
+				if ( arranjos[ i ][ k ] > arranjos[ i+1 ][ k ] ) {					
 					for( j = 0; j < d; j++ ) {
-						aux = arjs[ i ][ j ];
-						arjs[ i ][ j ] = arjs[ i+1 ][ j ];
-						arjs[ i+1 ][ j ] = aux;
+						aux = arranjos[ i ][ j ];
+						arranjos[ i ][ j ] = arranjos[ i+1 ][ j ];
+						arranjos[ i+1 ][ j ] = aux;
 					}					
 					ordenado = 0;
 				}
@@ -455,28 +453,32 @@ void radix_sort(arranjos arjs, int tam, int d) {
 	}
 }
 
-void vetor_para_arranjos( arranjos arjs, vetor vet, int tam, int* d) {
+void vetor_para_arranjos( int*** arranjos, vetor vet, int tam, int* d) {
 	int i, j;
 	int num, potencia10, pot10;
 	int max;
 	
 	max = busca_max( vet, tam );
-	*d = ((int)log10( max ))+1;
+	*d = ((int)log10( abs( max ) ))+1;
 	
+	*arranjos = (int**)malloc( tam * sizeof(int*) );
+	for( i = 0; i < tam; i++ )
+		(*arranjos)[ i ] = (int*)malloc( (*d) * sizeof(int) );
+		
 	potencia10 = (int)round(pow( 10.0, (*d)-1 ));
 	for( i = 0; i < tam; i++ ) {
 		num = vet[ i ];
 		
 		pot10 = potencia10;
 		for( j = 0; j < *d; j++ ) {			
-			arjs[ i ][ j ] = num / pot10;
-			num -= arjs[ i ][ j ] * pot10;
-			pot10 /= 10;		
+			(*arranjos)[ i ][ j ] = num / pot10;
+			num -= (*arranjos)[ i ][ j ] * pot10;
+			pot10 /= 10;
 		}
 	}	
 }
 
-void arranjos_para_vetor( arranjos arjs, vetor vet, int tam, int d ) {
+void arranjos_para_vetor( int** arranjos, vetor vet, int tam, int d ) {
 	int i, j;
 	int num, potencia10, pot10;
 	int naozero;
@@ -488,8 +490,8 @@ void arranjos_para_vetor( arranjos arjs, vetor vet, int tam, int d ) {
 		pot10 = potencia10;
 		naozero = 0;
 		for( j = 0; j < d; j++ ) {
-			if ( !naozero || ( naozero && arjs[ i ][ j ] != 0 ) ) {			
-				num += arjs[ i ][ j ] * pot10;
+			if ( !naozero || ( naozero && arranjos[ i ][ j ] != 0 ) ) {			
+				num += arranjos[ i ][ j ] * pot10;
 				naozero = 1;
 			}
 			pot10 /= 10;
