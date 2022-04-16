@@ -146,7 +146,6 @@ int main() {
 						counting_sort( vet, auxvet, max, tam );
 						ms2 = get_ms();
 						
-						copia_vetor( vet, auxvet, tam );
 						printf("\nVetor ordenado com sucesso em: %lldms", (ms2 - ms1));
 						break;
 					case '7':
@@ -434,7 +433,7 @@ void counting_sort(vetor in, vetor out, int max, int tam) {
 	}
 	
 	for( i = 1; i <= tam; i++ )
-		out[ i-1 ] = out[ i ];
+		in[ i-1 ] = out[ i ];
 }
 
 void radix_sort(int** arranjos, int tam, int d) {
