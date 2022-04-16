@@ -368,6 +368,8 @@ int particiona_tradicional(vetor vet, int p, int r ) {
 	return i+1;		
 }
 
+
+
 void quick_sort_tradicional(vetor vet, int p, int r ) {
 	int pivo;
 	if ( p < r ) {
@@ -430,6 +432,9 @@ void counting_sort(vetor in, vetor out, int max, int tam) {
 		out[ aux[ in[ i ] ] ] = in[ i ];
 		aux[ in[ i ] ]--;
 	}
+	
+	for( i = 1; i <= tam; i++ )
+		out[ i-1 ] = out[ i ];
 }
 
 void radix_sort(int** arranjos, int tam, int d) {
